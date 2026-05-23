@@ -59,7 +59,7 @@ def setup(bot):
         exponent: float,
     ):
         await interaction.response.send_message(
-            f"{base} ^ {exponent} = {base ** exponent}"
+            f"{base} ^ {exponent} = {base**exponent}"
         )
 
     @bot.tree.command(
@@ -75,4 +75,4 @@ def setup(bot):
                 "Cannot calculate the square root of a negative number."
             )
         else:
-            await interaction.response.send_message(f"√{number} = {number ** 0.5}")
+            await interaction.response.send_message(f"√{number} = {number**0.5}")
