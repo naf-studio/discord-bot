@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  quality:
+    name: Code Quality & Type Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Check code formatting
+        run: uv run ruff format --check .
+
+      - name: Lint codebase
+        run: uv run ruff check .
+
+      - name: Static type checking
+        run: uv run ty check
