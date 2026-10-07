@@ -1,6 +1,6 @@
 # NAF Studio - Discord Bot
 
-Community automation Discord bot powered by `discord.py`, architected with modular cogs, and built with modern Python tooling.
+Community automation Discord bot powered by `discord.py`, architected with modular cogs, and optimized for both modern local toolchains (`uv`, `ruff`, `ty`) and universal deployment on standard hosting panels (`python` + `pip`).
 
 ---
 
@@ -14,22 +14,30 @@ discord-bot/
 │   └── pull_request_template.md
 ├── config/
 │   └── messages/
-├── src/
-│   └── discord_bot/
+├── discord_bot/
+│   ├── cogs/
+│   ├── __init__.py
+│   ├── __main__.py
+│   ├── bot.py
+│   ├── config.py
+│   └── main.py
 ├── .editorconfig
 ├── .env.example
 ├── .gitattributes
 ├── .gitignore
 ├── CONTRIBUTING.md
 ├── LICENSE
-├── main.py
-├── pyproject.toml
+├── main.py                <-- Universal entrypoint runner
+├── pyproject.toml         <-- Modern packaging, scripts & tool configuration
+├── requirements.txt       <-- Synchronized production dependencies for pip hosts
+├── uv.lock
 └── README.md
 ```
 
-### Engineering Standards
+### Engineering Decisions & Standards
 
-- Conforms to standard PyPA `src-layout`, preventing top-level namespace collision while providing native entrypoint packaging via `[project.scripts]`.
+- Eliminates intermediate `src/` nesting while retaining strict package encapsulation. This guarantees zero-friction imports (`from discord_bot.main import main`) on constrained host panels that execute `python main.py` without package installation steps.
+- Ships with a locked, pre-compiled `requirements.txt` exported from `pyproject.toml`, ensuring out-of-the-box compatibility with hosting panels that strictly rely on `pip install -r requirements.txt`.
 - Discord imposes a hard quota of 200 global application command sync requests per day. Global syncing on boot is disabled by default (`SYNC_COMMANDS_ON_STARTUP=false`). Operators synchronize on-demand using `/sync [guild|global]`.
 - Global interaction error handling maps unhandled exceptions, missing permissions, and cooldowns to structured ephemeral feedback without hanging interaction lifecycles.
 - Dual-output logging multiplexes formatted records to console `stdout` and a size-capped `RotatingFileHandler` in `logs/bot.log`.
@@ -37,7 +45,35 @@ discord-bot/
 
 ---
 
-## 2. Getting Started
+## 2. Deployment on Standard Hosting Panels
+
+### 1. File Upload & Setup
+
+Upload or clone the repository to your host server. The panel will automatically recognize `requirements.txt` and `main.py`.
+
+### 2. Dependency Installation
+
+Most panels install dependencies automatically upon startup. If manual installation is required:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Environment Configuration
+
+Create a `.env` file in the root directory (or use your host panel's Environment Variables manager).
+
+### 4. Startup Command
+
+Set the panel startup command to:
+
+```bash
+python main.py
+```
+
+---
+
+## 3. Local Development with `uv`
 
 ### Prerequisites
 
@@ -45,68 +81,48 @@ discord-bot/
 - [uv](https://docs.astral.sh/uv/)
 - [ty](https://github.com/astral-sh)
 
-### Dependency Installation
+### Dependency Synchronization
 
 ```bash
-uv sync
+uv sync --all-extras
 ```
 
-### Environment Configuration
-
-Copy the template file to create your local `.env`:
-
-```bash
-cp .env.example .env
-```
-
-Configure parameters in `.env`:
-
-| Variable | Description | Default |
-| :--- | :--- | :--- |
-| `BOT_TOKEN` | Discord Bot Authentication Token | `required` |
-| `PERMISSIONS` | OAuth2 permissions integer for bot invite link | `8` |
-| `OWNER_ID` | Discord user ID of the primary administrator | `0` |
-| `SYNC_COMMANDS_ON_STARTUP` | Auto-sync application commands on startup | `false` |
-| `LOG_LEVEL` | Application logging level (`DEBUG`, `INFO`, `WARNING`) | `INFO` |
-| `DISCORD_INVITE_LINK` | Public Discord invite URL | `https://discord.nafmc.xyz/` |
-| `JOIN_CHANNEL_ID` | Audit channel ID for member join logs | `0` |
-| `LEAVE_CHANNEL_ID` | Audit channel ID for member departure logs | `0` |
-| `BOOST_CHANNEL_ID` | Audit channel ID for boost announcements | `0` |
-
-### Running the Bot
-
-Launch through any of the supported execution vectors:
+### Running Locally
 
 ```bash
 uv run discord-bot
-
 uv run python -m discord_bot
-
 uv run python main.py
 ```
 
----
+### Regenerating `requirements.txt`
 
-## 3. Code Quality, Linting & Type Checking
-
-Ensure all verification pipelines pass locally:
+When adding or updating dependencies in `pyproject.toml`, synchronize `requirements.txt` for hosting compatibility:
 
 ```bash
-uv run ruff check .
-
-uv run ruff format --check .
-
-ty check
+uv pip compile pyproject.toml -o requirements.txt
 ```
 
 ---
 
-## 4. Contributing
+## 4. Code Quality, Linting & Type Checking
+
+Ensure all verification pipelines pass locally before pushing changes:
+
+```bash
+uv run ruff check .
+uv run ruff format --check .
+uv run ty check
+```
+
+---
+
+## 5. Contributing
 
 Contributions must follow the standards outlined in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
-## 5. License
+## 6. License
 
 This project is licensed under the [MIT License](LICENSE). Copyright &copy; 2024 [naipret](https://github.com/naipret).

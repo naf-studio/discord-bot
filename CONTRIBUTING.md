@@ -67,10 +67,10 @@ All commit messages must adhere to the Conventional Commits specification:
 
 ## 4. Architecture & Clean Code Principles
 
-- Source code resides inside `src/discord_bot/`, ensuring strict separation from configuration assets and preventing namespace collisions.
-- Group related command handlers and event listeners inside dedicated `commands.Cog` modules within `src/discord_bot/cogs/`.
+- Source code resides inside `discord_bot/`, ensuring immediate execution compatibility with standard host panels while preventing namespace collisions.
+- Group related command handlers and event listeners inside dedicated `commands.Cog` modules within `discord_bot/cogs/`.
 - Never invoke unconditional global command syncing (`tree.sync()`) on startup. Use the administrative `/sync` command to register commands safely.
-- All environment variables and runtime secrets are parsed through `Settings` (`pydantic-settings`) in `src/discord_bot/config.py`.
+- All environment variables and runtime secrets are parsed through `Settings` (`pydantic-settings`) in `discord_bot/config.py`.
 - Unhandled interaction errors are intercepted by `tree.error` to provide helpful user feedback while preventing interaction timeouts.
 
 ---
