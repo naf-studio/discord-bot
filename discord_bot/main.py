@@ -27,7 +27,7 @@ def configure_logging(log_level_name: str = "INFO") -> None:
 
     file_handler = RotatingFileHandler(
         filename=logs_dir / "bot.log",
-        maxBytes=10 * 1024 * 1024,  # 10 MB per log file
+        maxBytes=10 * 1024 * 1024,
         backupCount=5,
         encoding="utf-8",
     )
