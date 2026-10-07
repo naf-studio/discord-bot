@@ -1,4 +1,4 @@
-"""Application entrypoint forwarding directly to discord_bot package."""
+"""Module entrypoint allowing invocation via `python -m discord_bot`."""
 
 from discord_bot.main import main
 
