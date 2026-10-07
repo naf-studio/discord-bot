@@ -1,0 +1,32 @@
+name: "Bug Report"
+description: "Report a bug, runtime exception, or unintended behavior in the bot"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting an issue! Please provide the details requested below.
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of the issue encountered.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction Steps
+      description: Specific steps to reproduce the observed behavior.
+      placeholder: |
+        1. Invoke command '/...'
+        2. Supply parameters '...'
+        3. Observe error response
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error Logs & Traceback
+      description: Paste relevant traceback or console error logs if available.
+      render: shell
